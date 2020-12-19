@@ -30,7 +30,7 @@ export default {
       }).then(() => {
         return models.Message.findByPk(id);
       });
-    }
+    },
   },
   Message: {
     user: async (message, args, { models }) => {
