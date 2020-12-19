@@ -9,10 +9,14 @@ export default {
   },
   Mutation: {
     createMessage: async (parent, { text }, { me, models }) => {
-      return await models.Message.create({
-        text,
-        userId: me.id,
-      });
+      // try {
+        return await models.Message.create({
+          text,
+          userId: me.id,
+        });
+      // } catch (error) {
+      //   throw new Error('My error message.');
+      // }
     },
     deleteMessage: async (parent, { id }, {models}) => {
       return await models.Message.destroy({where: { id }});
@@ -23,7 +27,7 @@ export default {
         userId: me.id
       },{
         where: { id },
-      }).then(function (result) {
+      }).then(() => {
         return models.Message.findByPk(id);
       });
     }
