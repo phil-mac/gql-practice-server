@@ -1,58 +1,36 @@
-import { v4 as uuidv4 } from 'uuid';
-
 export default {
   Query: {
-    messages: (parent, args, { models }) => {
-      return Object.values(models.messages);
+    messages: async (parent, args, { models }) => {
+      return await models.Message.findAll();
     },
-    message: (parent, { id }, { models }) => {
-      return models.messages[id];
+    message: async (parent, { id }, { models }) => {
+      return await models.Message.findByPk(id);
     },
   },
   Mutation: {
-    createMessage: (parent, { text }, { me, models }) => {
-      const id = uuidv4();
-      const message = {
-        id,
+    createMessage: async (parent, { text }, { me, models }) => {
+      return await models.Message.create({
         text,
         userId: me.id,
-      };
-
-      models.messages[id] = message;
-      models.users[me.id].messageIds.push(id);
-
-      return message;
+      });
     },
-    deleteMessage: (parent, { id }, {models}) => {
-      const{ [id]: message, ...otherMessages } = models.messages;
-
-      if (!message){
-        return false;
-      }
-
-      modles.messages = otherMessages;
-
-      return true;
+    deleteMessage: async (parent, { id }, {models}) => {
+      return await models.Message.destroy({where: { id }});
     },
-    updateMessage: (parent, { id, text }, { models }) => {
-      const{ [id]: message, ...otherMessages } = models.messages;
-
-      if (!message){
-        return false;
-      }
-
-      message = {
-        text: text,
-      }
-
-      models.messages[id] = message;
-
-      return true;
+    updateMessage: async (parent, { id, text }, { me, models }) => {
+      return await models.Message.update({ 
+        text,
+        userId: me.id
+      },{
+        where: { id },
+      }).then(function (result) {
+        return models.Message.findByPk(id);
+      });
     }
   },
   Message: {
-    user: (message, args, { models }) => {
-      return models.users[message.userId];
+    user: async (message, args, { models }) => {
+      return await models.Message.findByPk(message.userId);
     },
   },
 };
