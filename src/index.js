@@ -71,6 +71,7 @@ const createUsersWithMessages = async () => {
       username: 'pmac',
       email: 'pmac@nest.com',
       password: 'test123!',
+      role: 'ADMIN',
       messages: [
         {
           text: 'Learn from this tutorial',
